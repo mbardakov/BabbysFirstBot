@@ -1,4 +1,4 @@
-#BabbysFirstBot
+# BabbysFirstBot
 
 A simple Discord bot to experiment with features in the API.
 
@@ -8,4 +8,4 @@ To add to your channel, you need to create your own config/settings.json file, t
     "token":"..."
 }
 ```
-with your own token replacing "...".
+with your own token replacing `"...".`
