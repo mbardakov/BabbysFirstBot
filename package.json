@@ -1,0 +1,15 @@
+{
+  "name": "bigboibot",
+  "version": "1.0.0",
+  "description": "An experimental discord bot",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Max Bardakov",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^9.6.1",
+    "discord.js": "^11.3.2"
+  }
+}
