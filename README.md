@@ -8,4 +8,4 @@ To add to your channel, you need to create your own config/settings.json file, t
     "token":"..."
 }
 ```
-with your own token replacing `"...".`
+with your own token replacing `...`
