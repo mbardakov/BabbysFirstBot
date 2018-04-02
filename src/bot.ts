@@ -5,29 +5,46 @@ class Bot {
     static settings = require('../config/settings.json');
 
     static prefix: string = "!";
-    static swear_words: string[] = ["shit", "bitch", "fuck"]; 
+    static swear_words: string[] = ["shit", "bitch", "fuck", "cyka", "blyat"];
     // this is probably the last thing I'd want an employer to see
+
+    
     static init = () => {
         Bot.client.on('message', message => {
             // so the bot never responds to itself
             if (message.author.bot){
                 return;
             }
+            
+            // flexible function to see if 'msg' contains 'target';
+            // ignores whitespace and capitalization
+            let flexContains = (target: string) => {
+                return message.content.replace(/\s/g,'').toLowerCase().indexOf(target) >= 0;
+            }
 
             Bot.swear_words.forEach((word)=>{
-                if (message.content.toLowerCase().indexOf(word) >= 0){
+                if (flexContains(word)){
                     message.reply('You said: "' + word +'". Please do not swear in my server.')
                     return;
                 }
             });
             
-            if (message.content.toLowerCase().indexOf('bot') >= 0){
+            // easter eggs
+            if (flexContains('bot')){
                 message.channel.send('new bot who dis');            
             }
 
-            // individual commands (!foo)
-            if (message.content.toLowerCase().indexOf(Bot.prefix + 'queen') === 0) { // same as "startsWith"
-                message.channel.send('https://open.spotify.com/artist/6sFIWsNpZYqfjUpaCgueju');
+            if (flexContains('omaewamoushinderu')){
+                message.channel.send('NANI!?');
+            }
+
+            // commands
+            if (message.content.charAt(0) === Bot.prefix){
+                let name = message.content.split(' ')[0].slice(1);
+                let args = message.content.split(' ').slice(1);
+                if (name === 'queen'){
+                    message.channel.send('https://open.spotify.com/artist/6sFIWsNpZYqfjUpaCgueju');
+                }
             }
             
         });
