@@ -15,18 +15,18 @@ class Bot {
             }
 
             Bot.swear_words.forEach((word)=>{
-                if (message.content.indexOf('bot') >= 0){
+                if (message.content.toLowerCase().indexOf(word) >= 0){
                     message.reply('You said: "' + word +'". Please do not swear in my server.')
                     return;
                 }
             });
             
-            if (message.content.indexOf('bot') >= 0){
+            if (message.content.toLowerCase().indexOf('bot') >= 0){
                 message.channel.send('new bot who dis');            
             }
 
             // individual commands (!foo)
-            if (message.content.indexOf(Bot.prefix + 'queen') === 0) { // same as "startsWith"
+            if (message.content.toLowerCase().indexOf(Bot.prefix + 'queen') === 0) { // same as "startsWith"
                 message.channel.send('https://open.spotify.com/artist/6sFIWsNpZYqfjUpaCgueju');
             }
             

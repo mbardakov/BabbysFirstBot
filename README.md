@@ -9,3 +9,10 @@ To add to your channel, you need to create your own config/settings.json file, t
 }
 ```
 with your own token replacing `...`
+
+To run, from the command line:
+
+```
+npm install
+node built/bot.js
+```
