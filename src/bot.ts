@@ -19,22 +19,27 @@ class Bot {
             // flexible function to see if 'msg' contains 'target';
             // ignores whitespace and capitalization
             let flexContains = (target: string) => {
-                return message.content.replace(/\s/g,'').toLowerCase().indexOf(target) >= 0;
+                return message.content.replace(/\s/g,'').toLowerCase().indexOf(target.replace(/\s/g,'')) >= 0;
             }
 
+            let swears_detected = [];
             Bot.swear_words.forEach((word)=>{
                 if (flexContains(word)){
-                    message.reply('You said: "' + word +'". Please do not swear in my server.')
-                    return;
+                    swears_detected.push(word);
                 }
             });
-            
+            if (swears_detected.length > 0){
+                message.reply('You said: ' + swears_detected.join(', ') + '. please do not swear in my server.');
+            }
+
             // easter eggs
             if (flexContains('bot')){
                 message.channel.send('new bot who dis');            
             }
-
-            if (flexContains('omaewamoushinderu')){
+            if (flexContains('ur mum gay')){
+                message.channel.send('no u');
+            }
+            if (flexContains('omae wa mou shinderu')){
                 message.channel.send('NANI!?');
             }
 
@@ -45,6 +50,7 @@ class Bot {
                 if (name === 'queen'){
                     message.channel.send('https://open.spotify.com/artist/6sFIWsNpZYqfjUpaCgueju');
                 }
+                // more commands here
             }
             
         });
