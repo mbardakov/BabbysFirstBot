@@ -8,24 +8,39 @@ class Bot {
     static swear_words: string[] = ["shit", "bitch", "fuck", "cyka", "blyat"];
     // this is probably the last thing I'd want an employer to see
 
-    static init = () => {
+    static reset = () => {
+        console.log('Bot online, waiting for input...');
+        Bot.client.user.setActivity('with your heart. <3', {"type":"PLAYING"}).catch(err => {console.log('could not set bot activity: ', err)});
+    }
+
+    static go = () => {
         Bot.client.login(Bot.settings.token);
 
         Bot.client.on('ready', () => { 
-            console.log('Bot online, waiting for input...');
-            Bot.client.user.setActivity('with your heart. <3', {"type":"PLAYING"});
+            Bot.reset();
         });
 
         Bot.client.on('message', message => {
-            // so the bot never responds to itself
-            if (message.author.bot){
-                return;
-            }
-            
+            // helper functions:
+            // I don't like how these are hard-coded to use message.content, given that they're simple string manipulations.
+            // might make more sense to put them in another library, and possibly wrap them
+
             // flexible function to see if 'msg' contains 'target';
             // ignores whitespace and capitalization
             let flexContains = (target: string) => {
                 return message.content.replace(/\s/g,'').toLowerCase().indexOf(target.replace(/\s/g,'')) >= 0;
+            }
+
+            let scanArgs = () => {
+                // https://stackoverflow.com/questions/23582276/split-string-by-comma-but-ignore-commas-inside-quotes/23582323
+                let res = message.content.split(/ (?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                return res.map(word=>word.replace(/"/g,'')).slice(1); // first thing is still the name
+            }
+
+            // actual code:
+            // so the bot never responds to itself
+            if (message.author.bot){
+                return;
             }
 
             // setting this as the highest priority (and returning when it's done) prevents users from putting swear words in their commands
@@ -43,15 +58,21 @@ class Bot {
             // commands
             if (message.content.charAt(0) === Bot.prefix){
                 let name = message.content.split(' ')[0].slice(1);
-                let args = message.content.split(' ').slice(1);
-                // TODO: better scanner for args (treat quotes the way you'd expect)
+                // let args = message.content.split(' ').slice(1);
+                let args = scanArgs();
 
                 switch (name){
                     case 'queen':
                         message.channel.send('https://open.spotify.com/artist/6sFIWsNpZYqfjUpaCgueju');
                         break;
                     case 'game':
-                        Bot.client.user.setActivity(args.join(' '), {type: "PLAYING"}); // re-joining the arguments here is kind of a hack
+                        console.log("setting game to: " + args[0]);
+                        Bot.client.user.setActivity(args[0], {type: "PLAYING"}).catch((err) => {
+                            message.channel.send("something went wrong: ", err);
+                        });
+                        break;
+                    case 'reset':
+                        Bot.reset();
                         break;
                     default:
                         message.reply("unknown command: " + name + ", with aruments: "+ args.join());
@@ -69,11 +90,9 @@ class Bot {
             if (flexContains('omae wa mou shinderu')){
                 message.channel.send('NANI!?');
             }
-
-            
         });
     }
 }
 
-Bot.init();
+Bot.go();
 // TODO: some modularity? enable/disable listeners (or just make separate bots)
