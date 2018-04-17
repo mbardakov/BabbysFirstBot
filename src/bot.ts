@@ -5,35 +5,26 @@ import * as SpotifyWebApi from 'spotify-web-api-node'
 class Bot {
     static client: Client = new Client();
     static settings = require('../config/settings.json');
-    static spotify = new SpotifyWebApi({clientId: Bot.settings.clientId, clientSecret: Bot.settings.clientSecret, redirectUri: Bot.settings.redirectUri});
+    static spotify = new SpotifyWebApi({clientId: Bot.settings.clientId, 
+        clientSecret: Bot.settings.clientSecret, 
+        redirectUri: Bot.settings.redirectUri});
 
     static prefix: string = "!";
     static swear_words: string[] = ['shit', 'bitch', 'fuck', 'cyka', 'blyat'];
-    static responses: string[] = ['new bot who dis', "don't @ me"]
-    static access_token = '';
     // this is probably the last thing I'd want an employer to see
+    static responses: string[] = ['new bot who dis', "don't @ me", 'excuse me'];
 
     static authorize = () => {
         var scopes = ['playlist-read-collaborative', 'playlist-modify-public'],
         clientId = Bot.settings.clientId,
         state = 'init';
-
-        // Create the authorization URL
-        var authorizeURL = Bot.spotify.createAuthorizeURL(scopes, state);
-        // TODO: have to go to this URL, accept, then have it redirect to some listener
-        console.log(authorizeURL);
+        // more stuff here?
     }
 
     static reset = () => {
         console.log('Bot online, waiting for input...');
-
-        // given that tokens don't last very long, it may make sense to get one per request? or based on a timer?
-        Bot.spotify.clientCredentialsGrant().then((res)=>{
-            // console.log('client credentials granted: ', res);
-            Bot.spotify.setAccessToken(res.body.access_token);
-        }, (err) => {
-            console.log('authentication went wrong: ', err);
-        });
+        Bot.spotify.setAccessToken(Bot.settings.accessToken);
+        Bot.spotify.setRefreshToken(Bot.settings.refreshToken);
         Bot.client.user.setActivity('with your heart. <3', {"type":"PLAYING"}).catch(err => {console.log('could not set bot activity: ', err)});
     }
 
@@ -89,8 +80,14 @@ class Bot {
                         // add a list of songs to the playlist
                         } else if (args.length >= 2 && args[0] === 'add'){
                             let parsed = Util.parseSong(args[1]);
-                            let songs = args.slice(1).map((link)=>{Util.parseSong(link)});
-                            return Bot.spotify.addTracksToPlaylist('enigmers', '0NtXcfsedFjAwA66LpKstp', songs);
+                            let songs = args.slice(1).map((link)=>{return Util.parseSong(link)});
+                            console.log('addTracksToPlaylist: ', songs);
+                            return Bot.spotify.addTracksToPlaylist('enigmers', '0NtXcfsedFjAwA66LpKstp', songs)
+                            .then((res)=>{
+                                console.log(res);
+                            }, (err)=>{
+                                console.log(err);
+                            });
                             // this currently rejects with a WebApierror: forbidden
                         }
                         // spotify:user:enigmers:playlist:0NtXcfsedFjAwA66LpKstp

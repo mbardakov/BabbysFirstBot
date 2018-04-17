@@ -1,3 +1,5 @@
 built/*
 config/*
 node_modules/*
+provided/*
+npm-debug.log
